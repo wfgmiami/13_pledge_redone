@@ -103,7 +103,7 @@ describe('A promise', function(){
 
     // Recommended: add a `._callHandlers` method to your promise prototype.
 
-    xit('calls a success handler added by `.then`', function(){
+    it('calls a success handler added by `.then`', function(){
       promiseForNum.then( setFoo10 );
       expect( setFoo10 ).toHaveBeenCalled();
     });
