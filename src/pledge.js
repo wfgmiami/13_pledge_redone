@@ -36,14 +36,17 @@ $Promise.prototype._internalResolve = function(data) {
       this._handlerGroups = [];
     }
   }
-
 }
 
 $Promise.prototype._internalReject = function(reason) {
   if( this._state === 'pending' ){
     this._value = reason;
     this._state = 'rejected';
-    if(this._handlerGroups.length > 0) this._callHandlers();
+
+    if(this._handlerGroups.length > 0) {
+      this._callHandlers();
+      this._handlerGroups = [];
+    }
   }
 }
 
@@ -51,46 +54,77 @@ $Promise.prototype._callHandlers = function(obj){
   var len = this._handlerGroups.length;
 
   if(obj){
-    if( len > 0 ){
-      this._handlerGroups[len - 1].downstreamPromise = { successPromise: obj.successCb, errorPromise: obj.errorCb };
-      this._handlerGroups[ len ] = obj;
-      len++;
-    }else{
-      this._handlerGroups.push( obj );
-      len++;
-    }
+    this._handlerGroups.push( obj )
+    len++;
+  }
 
-    if(this._state === 'fulfilled' && len === 1){
-      this._handlerGroups[0].successCb(this._value);
-    }else if( this._state === 'fulfilled' && len > 1){
-      this._handlerGroups.slice(len-2,-1).forEach( group => {
-        group.downstreamPromise.successPromise(this._value);
-      })
+  if(this._state === 'fulfilled' && obj ){
+    if( obj.successCb ){
+      try{
+        this._handlerGroups[len - 1].successCb(this._value)
+      }
+      catch(e){
+        this._handlerGroups[0].downstreamPromise._internalReject(this._value)
+      }
     }
+  }else if( this._state === 'fulfilled' && !obj ){
+    this._handlerGroups.forEach( group => {
+      if( group.successCb ){
+        try{ var resolvedValue = group.successCb(this._value); }
+        catch(e){
+          group.downstreamPromise._internalReject(e);
+        }
 
-    if(this._state === 'rejected' && len === 1 && this._handlerGroups[0].errorCb !== null ){
-      this._handlerGroups[0].errorCb(this._value);
-    }else if( this._state === 'rejected' && len > 1){
-      this._handlerGroups.slice(len-2,-1).forEach( group => {
-        group.downstreamPromise.errorPromise(this._value)
-      })
-    }
+        if( typeof( resolvedValue ) === 'object' ){
+          var returnedPromise = resolvedValue;
+          returnedPromise.then( (val) => {
+            group.downstreamPromise._internalResolve(val)
+          } )
+          .catch( err => {
+            group.downstreamPromise._internalReject( err )
+           })
 
+        }else{
+          group.downstreamPromise._internalResolve(resolvedValue);
+        }
+      }else{
+        group.downstreamPromise._internalResolve(this._value);
+      }
+    })
   }else if( this._state === 'fulfilled' ){
-    this._handlerGroups[0].successCb(this._value)
+    this._handlerGroups[0].downstreamPromise._internalResolve(this._value)
+  }
 
+
+  if(this._state === 'rejected' && obj ){
+    if( obj.errorCb )
+      this._handlerGroups[len - 1].errorCb(this._value)
+  }else if( this._state === 'rejected' && !obj ){
     this._handlerGroups.forEach( group => {
-      if(typeof(group.downstreamPromise.successPromise) === 'function'){
-        group.downstreamPromise.successPromise(this._value)
+
+      if( group.errorCb ){
+        try{ var resolvedError = group.errorCb(this._value); }
+        catch(e){
+          console.log('............')
+          group.downstreamPromise._internalReject(e);
+        }
+
+        if( typeof(resolvedError) === 'object' && typeof( resolvedError ) !== 'string' ) {
+          var returnedPromise = resolvedError;
+          returnedPromise.then( val => {
+            group.downstreamPromise._internalResolve( val )
+          })
+          .catch( err => group.downstreamPromise._internalReject(err) )
+
+        }else{
+          group.downstreamPromise._internalResolve(resolvedError);
+        }
+      }else{
+        group.downstreamPromise._internalReject(this._value);
       }
     })
-  }else if ( this._state === 'rejected' ){
-    this._handlerGroups[0].errorCb(this._value)
-    this._handlerGroups.forEach( group => {
-      if(typeof(group.downstreamPromise.errorPromise) === 'function'){
-        group.downstreamPromise.errorPromise(this._value)
-      }
-    })
+  }else if( this._state === 'rejecteded' ){
+    this._handlerGroups[0].downstreamPromise._internalReject(this._value)
   }
 }
 
@@ -105,8 +139,12 @@ $Promise.prototype.then = function(success, fail){
   if( typeof(fail) === 'function'){
     failVal = fail
   }
-  var obj = { successCb: successVal, errorCb: failVal, downstreamPromise: { successPromise: null, errorPromise: null } }
+
+
+  var obj = { successCb: successVal, errorCb: failVal,downstreamPromise: new $Promise(function() {}) }
+
   this._callHandlers(obj);
+  return obj.downstreamPromise;
 }
 
 $Promise.prototype.catch = function(err){

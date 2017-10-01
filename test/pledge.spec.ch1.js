@@ -39,7 +39,7 @@ Chapter 1: Basic Structure and State Changes
 // "classes". Although JS is not a class-based language, we still tend to talk
 // in terms of constructors and instances.
 
-describe('The `$Promise` class', function(){
+xdescribe('The `$Promise` class', function(){
 
   it('is a function', function(){
     expect( typeof $Promise ).toBe( 'function' );
@@ -74,7 +74,7 @@ describe('The `$Promise` class', function(){
 
 });
 
-describe('A promise instance', function(){
+xdescribe('A promise instance', function(){
 
   var promise;
   beforeEach(function(){
@@ -107,7 +107,7 @@ describe('A promise instance', function(){
 
   // We have some scaffolding set up, now let's work on behavior.
 
-  describe('resolving', function(){
+  xdescribe('resolving', function(){
 
     it('changes the promise state to "fulfilled"', function(){
 
@@ -147,7 +147,7 @@ describe('A promise instance', function(){
 
   });
 
-  describe('rejecting', function(){
+  xdescribe('rejecting', function(){
 
     // Rejection and fulfillment are virtually identical. This should not
     // require much more code.
@@ -181,7 +181,7 @@ describe('A promise instance', function(){
 
   });
 
-  describe('settled promises never change state:', function(){
+  xdescribe('settled promises never change state:', function(){
 
     // If you used the pending status for your "does not affect already
     // fulfilled / rejected" specs, these two specs should pass already.
@@ -218,7 +218,7 @@ describe('A promise instance', function(){
 // promise is constructed, access to the resolver and rejector is naturally
 // limited, making the promise more trustable.
 
-describe('The executor function', function(){
+xdescribe('The executor function', function(){
 
   var executor;
   beforeEach(function(){

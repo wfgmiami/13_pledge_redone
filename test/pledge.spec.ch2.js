@@ -30,7 +30,7 @@ function noop () {}
 // function is used to register *handlers* if and when the promise either
 // fulfills or rejects.
 
-describe("A promise's `.then` method", function(){
+xdescribe("A promise's `.then` method", function(){
 
   var promise, s1, e1, s2, e2;
   beforeEach(function(){
@@ -70,7 +70,7 @@ describe("A promise's `.then` method", function(){
 // Now comes one of the "magic" parts of promises — the way they can trigger
 // handlers both when they settle, and also after they have already settled.
 
-describe('A promise', function(){
+xdescribe('A promise', function(){
 
   var promiseForNum, foo;
   var setFoo10 = jasmine.createSpy('setFoo10').and.callFake(function () {

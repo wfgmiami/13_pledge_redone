@@ -24,7 +24,7 @@ Chapter 3: Completing the Handlers: Rejection & Catch
 
 function noop () {}
 
-describe('Another promise', function(){
+xdescribe('Another promise', function(){
 
   var promiseForThing, log;
   var logOops = jasmine.createSpy('logOops').and.callFake(function () {
@@ -49,7 +49,7 @@ describe('Another promise', function(){
 
   });
 
-  describe('that is already rejected', function(){
+  xdescribe('that is already rejected', function(){
 
     var theReason = { code: 'timed out' };
     beforeEach(function(){
@@ -94,7 +94,7 @@ describe('Another promise', function(){
 
   });
 
-  describe('that already has an error handler', function(){
+  xdescribe('that already has an error handler', function(){
 
     var theReason = { code: 'unauthorized' };
 
@@ -116,7 +116,7 @@ describe('Another promise', function(){
   // This next part is a demonstration; with working resolution and rejection,
   // promises can be used as drop-in callback replacements.
 
-  describe('with both success and error handlers', function(){
+  xdescribe('with both success and error handlers', function(){
 
     var ui;
     beforeEach(function(){
@@ -161,7 +161,7 @@ describe('Another promise', function(){
 // method to your promise prototype. The internals of this method can be coded
 // as one short line.
 
-describe("A promise's `.catch` method", function(){
+xdescribe("A promise's `.catch` method", function(){
 
   var promise;
   beforeEach(function(){
