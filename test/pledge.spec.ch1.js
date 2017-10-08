@@ -39,7 +39,7 @@ Chapter 1: Basic Structure and State Changes
 // "classes". Although JS is not a class-based language, we still tend to talk
 // in terms of constructors and instances.
 
-xdescribe('The `$Promise` class', function(){
+describe('The `$Promise` class', function(){
 
   it('is a function', function(){
     expect( typeof $Promise ).toBe( 'function' );
@@ -74,7 +74,7 @@ xdescribe('The `$Promise` class', function(){
 
 });
 
-xdescribe('A promise instance', function(){
+describe('A promise instance', function(){
 
   var promise;
   beforeEach(function(){
@@ -218,7 +218,7 @@ xdescribe('A promise instance', function(){
 // promise is constructed, access to the resolver and rejector is naturally
 // limited, making the promise more trustable.
 
-xdescribe('The executor function', function(){
+describe('The executor function', function(){
 
   var executor;
   beforeEach(function(){

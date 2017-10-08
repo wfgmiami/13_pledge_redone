@@ -24,7 +24,7 @@ Chapter 3: Completing the Handlers: Rejection & Catch
 
 function noop () {}
 
-xdescribe('Another promise', function(){
+describe('Another promise', function(){
 
   var promiseForThing, log;
   var logOops = jasmine.createSpy('logOops').and.callFake(function () {
@@ -161,7 +161,7 @@ xdescribe('Another promise', function(){
 // method to your promise prototype. The internals of this method can be coded
 // as one short line.
 
-xdescribe("A promise's `.catch` method", function(){
+describe("A promise's `.catch` method", function(){
 
   var promise;
   beforeEach(function(){
